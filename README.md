@@ -1,5 +1,10 @@
 # Android Like Spinner with Jetpack Compose 🚀
 
+[![](https://jitpack.io/v/MFranceschi6/loading-spinner.svg)](https://jitpack.io/#MFranceschi6/loading-spinner) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
+
+
+
 This is a simple implementation of the common loading spinner of Android implemented as a `Compose Modifier` using the Jetpack Compose Animations.
 
 Compatible with Compose Version **0.1.0-dev15**
@@ -50,7 +55,7 @@ allprojects {
 Add the dependency
 
 ```gradle
-  implementation 'com.github.MFranceschi6:loading-spinner:-SNAPSHOT'
+  implementation 'com.github.MFranceschi6:loading-spinner:0.15.0'
 ```
 
 ## How To Use
