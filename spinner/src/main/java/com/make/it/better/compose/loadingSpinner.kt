@@ -176,31 +176,5 @@ fun Modifier.loadingSpinner(loading: Boolean, color: Color? = null, width: Float
     } else {
         Modifier
     }
+
 }
-
-/**
- * Configure component to display the Android loading spinner if [loading]
- *
- * Add this [Modifier] to the element to make it show a loading spinner instead of the content of the element,
- * set [loading] to false to show the content of the element instead.
- *
- * It's important to set any drawing modifier you are interested in for example [Modifier.drawBackground] before this modifier,
- * otherwise it will prevent them to be shown.
- *
- * example:
- * ```
- * Surface(modifier = Modifier.drawBackground(Color.Red).loadingSpinner(isLoading).drawBackgrount(Color.Green)){
- *
- * }
- * ```
- * This will show a [Color.Red] background while loading and then a [Color.Green] background to show it's elements
- *
- * @param loading control if to show or not the spinner
- * @param color color to apply to the spinner, if null the primary color taken from [MaterialTheme.colors] will be used
- * @param width width of the stroke to draw the spinner
- * @param dimension desired size of the spinner default to 80F which is the dimension of the [SpinnerSize.Medium]
- *
- * @see SpinnerSize
- */
-fun Modifier.loadingSpinner(loading: Boolean, color: Color? = null, width: Float = 16F, dimension: Float = 80F) = loadingSpinner(loading, color, width, SpinnerSize(dimension))
-
