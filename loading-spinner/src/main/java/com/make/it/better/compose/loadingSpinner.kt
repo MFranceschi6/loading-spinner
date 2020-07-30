@@ -21,7 +21,6 @@ import androidx.ui.graphics.StrokeCap
 import androidx.ui.graphics.drawscope.Stroke
 import androidx.ui.graphics.drawscope.rotate
 import androidx.ui.material.MaterialTheme
-import androidx.ui.material.Surface
 import androidx.ui.unit.IntSize
 
 
@@ -58,7 +57,7 @@ object SpinnerSize{
     /**
      * Expands the spinner dimensions to the dimension of the element is applied
      */
-    val FitContainer = SpinnerSize(0F)
+    val FillElement = SpinnerSize(0F)
 }
 
 /**
@@ -140,7 +139,7 @@ fun Modifier.loadingSpinner(loading: Boolean, color: Color? = null, width: Float
             Log.d("ANIMATION MEASURES", "current Rotation: ${rotationAnimation.value}, current Arc: ${arcAnimation.value}")
             rotate(-rotationAnimation.value, center.x, center.y) {
 
-                val (offset, usedSize) = if (size == SpinnerSize.FitContainer) {
+                val (offset, usedSize) = if (size == SpinnerSize.FillElement) {
                     val smallerDimen = (this@drawWithContent.size).minDimension
                     Pair(
                         center.minus(Offset(smallerDimen / 2, smallerDimen / 2)),
@@ -203,5 +202,5 @@ fun Modifier.loadingSpinner(loading: Boolean, color: Color? = null, width: Float
  *
  * @see SpinnerSize
  */
-fun Modifier.loadingSpinner(loading: Boolean, color: Color? = null, width: Float = 16F, dimension: Float = 80F) = Modifier.loadingSpinner(loading, color, width, SpinnerSize(dimension))
+fun Modifier.loadingSpinner(loading: Boolean, color: Color? = null, width: Float = 16F, dimension: Float = 80F) = loadingSpinner(loading, color, width, SpinnerSize(dimension))
 
