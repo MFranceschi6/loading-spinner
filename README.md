@@ -29,10 +29,10 @@ fun mainView() {
   Column(modifier = Modifier.fillMaxSize().drawBackground(Color.Yellow).loadingSpinner(loading).drawBackground(Color.Cyan), horizontalGravity = Alignment.CenterHorizontally) {
     Surface(
       modifier = Modifier.drawBackground(Color.Red).loadingSpinner(
-        enabled = !loading,
+        loading = !loading,
         size = SpinnerSize.FitContainer
       ).fillMaxWidth().height(400.dp)) { }
-    Surface(modifier = Modifier.preferredSize(190.dp, 190.dp).drawBackground(Color.Green).loadingSpinner(enabled = !enabled, color = Color.Red)) { }
+    Surface(modifier = Modifier.preferredSize(190.dp, 190.dp).drawBackground(Color.Green).loadingSpinner(loading = !loading, color = Color.Red)) { }
   }
 }
 ```
