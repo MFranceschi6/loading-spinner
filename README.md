@@ -65,8 +65,6 @@ This repo exposes the function `Modifier.loadingSpinner` which it returns a Modi
 * `width: Float = 16F` the size of the `Stroke` used to draw the spinner
 * `size: Size = SpinnerSize.Medium` the desired size for the spinner
 
-There is also a version of the function which accepts a `dimension` as `Float` instead of the parameter `size`
-
 if you need to apply modifiers which draw something on the element it's important to use them before the `loadingSpinner` modifier otherwise they won't be placed
 when the spinner is showing:
 
