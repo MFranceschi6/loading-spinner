@@ -68,7 +68,7 @@ This repo exposes the function `Modifier.loadingSpinner` which it returns a Modi
 * `loading: Boolean` if true shows the spinner, otherwise shows the contents of the element
 * `color: Color? = null` the color for the spinner, otherwise it uses `MaterialTheme.colors.primary`
 * `width: Float = 16F` the size of the `Stroke` used to draw the spinner
-* `size: Size = SpinnerSize.Medium` the desired size for the spinner
+* `size: Size = SpinnerSize.Medium` the desired dimension of the spinner in `Dp`
 
 if you need to apply modifiers which draw something on the element it's important to use them before the `loadingSpinner` modifier otherwise they won't be placed
 when the spinner is showing:
@@ -85,5 +85,5 @@ If `isLoading` is `true` the column will show a red background with a green spin
 
 ### SpinnerSize
 
-Helper function and object which provides standard spinner sizes.
+Helper object which provides standard spinner sizes.
 It also provides `SpinnerSize.FillElement` which if passed as the size of the spinner will cause the spinner to fill the available space of the element to which is applied
