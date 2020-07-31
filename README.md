@@ -1,5 +1,10 @@
 # Android Like Spinner with Jetpack Compose 🚀
 
+[![](https://jitpack.io/v/MFranceschi6/loading-spinner.svg)](https://jitpack.io/#MFranceschi6/loading-spinner) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
+
+
+
 This is a simple implementation of the common loading spinner of Android implemented as a `Compose Modifier` using the Jetpack Compose Animations.
 
 Compatible with Compose Version **0.1.0-dev15**
@@ -24,10 +29,10 @@ fun mainView() {
   Column(modifier = Modifier.fillMaxSize().drawBackground(Color.Yellow).loadingSpinner(loading).drawBackground(Color.Cyan), horizontalGravity = Alignment.CenterHorizontally) {
     Surface(
       modifier = Modifier.drawBackground(Color.Red).loadingSpinner(
-        enabled = !loading,
+        loading = !loading,
         size = SpinnerSize.FitContainer
       ).fillMaxWidth().height(400.dp)) { }
-    Surface(modifier = Modifier.preferredSize(190.dp, 190.dp).drawBackground(Color.Green).loadingSpinner(enabled = !enabled, color = Color.Red)) { }
+    Surface(modifier = Modifier.preferredSize(190.dp, 190.dp).drawBackground(Color.Green).loadingSpinner(loading = !loading, color = Color.Red)) { }
   }
 }
 ```
@@ -50,7 +55,7 @@ allprojects {
 Add the dependency
 
 ```gradle
-  implementation 'com.github.MFranceschi6:loading-spinner:-SNAPSHOT'
+  implementation 'com.github.MFranceschi6:loading-spinner:0.15.0'
 ```
 
 ## How To Use
@@ -64,8 +69,6 @@ This repo exposes the function `Modifier.loadingSpinner` which it returns a Modi
 * `color: Color? = null` the color for the spinner, otherwise it uses `MaterialTheme.colors.primary`
 * `width: Float = 16F` the size of the `Stroke` used to draw the spinner
 * `size: Size = SpinnerSize.Medium` the desired size for the spinner
-
-There is also a version of the function which accepts a `dimension` as `Float` instead of the parameter `size`
 
 if you need to apply modifiers which draw something on the element it's important to use them before the `loadingSpinner` modifier otherwise they won't be placed
 when the spinner is showing:
