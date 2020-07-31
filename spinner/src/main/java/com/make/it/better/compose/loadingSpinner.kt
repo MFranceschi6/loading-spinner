@@ -1,7 +1,6 @@
 package com.make.it.better.compose
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.animation.*
 import androidx.compose.onCommit
 import androidx.compose.remember
@@ -9,10 +8,7 @@ import androidx.ui.animation.AnimatedFloatModel
 import androidx.ui.animation.AnimatedValueModel
 import androidx.ui.animation.IntSizeToVectorConverter
 import androidx.ui.animation.asDisposableClock
-import androidx.ui.core.AnimationClockAmbient
-import androidx.ui.core.Modifier
-import androidx.ui.core.composed
-import androidx.ui.core.drawWithContent
+import androidx.ui.core.*
 import androidx.ui.foundation.drawBackground
 import androidx.ui.geometry.Offset
 import androidx.ui.geometry.Size
@@ -22,12 +18,9 @@ import androidx.ui.graphics.drawscope.Stroke
 import androidx.ui.graphics.drawscope.rotate
 import androidx.ui.material.MaterialTheme
 import androidx.ui.unit.IntSize
+import androidx.ui.unit.dp
+import androidx.ui.unit.Dp
 
-
-/**
- * Helper function to create a [Size] to be passed to the [Modifier.loadingSpinner]
- */
-fun SpinnerSize(dimension: Float) = Size(dimension, dimension)
 
 /**
  * Collection of common spinner dimensions,
@@ -35,29 +28,29 @@ fun SpinnerSize(dimension: Float) = Size(dimension, dimension)
 object SpinnerSize{
 
     /**
-     * [Size] of 40F
+     * [Dp] of 20F.dp
      */
-    val Small = SpinnerSize(40F)
+    val Small = 20F.dp
 
     /**
-     * [Size] of 80F
+     * [Dp] of 40F.dp
      */
-    val Medium = SpinnerSize(80F)
+    val Medium = 40F.dp
 
     /**
-     * [Size] of 120F
+     * [Dp] of 60F.dp
      */
-    val Big = SpinnerSize(120F)
+    val Big = 60F.dp
 
     /**
-     * [Size] of 160F
+     * [Dp] of 60F.dp
      */
-    val Bigger = SpinnerSize(160F)
+    val Bigger = 80F.dp
 
     /**
      * Expands the spinner dimensions to the dimension of the element is applied
      */
-    val FillElement = SpinnerSize(0F)
+    val FillElement = 0F.dp
 }
 
 /**
@@ -85,9 +78,7 @@ object SpinnerSize{
  * @see SpinnerSize
  */
 @SuppressLint("Range")
-fun Modifier.loadingSpinner(loading: Boolean, color: Color? = null, width: Float = 16F, size: Size = SpinnerSize.Medium): Modifier = composed {
-
-    check(size.height == size.width) { "Spinner size must have the same height and width, received size: $size" }
+fun Modifier.loadingSpinner(loading: Boolean, color: Color? = null, width: Float = 16F, size: Dp = SpinnerSize.Medium): Modifier = composed {
 
 
     val clock = AnimationClockAmbient.current.asDisposableClock()
@@ -95,6 +86,7 @@ fun Modifier.loadingSpinner(loading: Boolean, color: Color? = null, width: Float
         AnimatedFloatModel(0F, clock)
     }
 
+    val sizeInPixels = with(DensityAmbient.current) { size.toPx() }.let { remember(size) { Size(it, it) } }
 
     val strokeColor = color ?: MaterialTheme.colors.primary
 
@@ -136,17 +128,18 @@ fun Modifier.loadingSpinner(loading: Boolean, color: Color? = null, width: Float
     this + if(loading) {
         Modifier.drawWithContent {
 
-            Log.d("ANIMATION MEASURES", "current Rotation: ${rotationAnimation.value}, current Arc: ${arcAnimation.value}")
             rotate(-rotationAnimation.value, center.x, center.y) {
 
                 val (offset, usedSize) = if (size == SpinnerSize.FillElement) {
                     val smallerDimen = (this@drawWithContent.size).minDimension
-                    Pair(
-                        center.minus(Offset(smallerDimen / 2, smallerDimen / 2)),
-                        SpinnerSize(smallerDimen)
-                    )
+                    (smallerDimen-width).let {
+                        Pair(
+                                center.minus(Offset(it / 2, it / 2)),
+                                Size(it, it)
+                        )
+                    }
                 } else {
-                    Pair(center.minus(Offset(size.width / 2, size.height / 2)), size)
+                    Pair(center.minus(Offset(sizeInPixels.width / 2, sizeInPixels.height / 2)), sizeInPixels)
                 }
 
                 if (arcAnimation.value.width == 0) {
@@ -163,13 +156,13 @@ fun Modifier.loadingSpinner(loading: Boolean, color: Color? = null, width: Float
                 val startAngle = arcAnimation.value.width - currentOffSet
                 val sweepAngle = arcAnimation.value.height
                 drawArc(
-                    color = strokeColor,
-                    startAngle = startAngle.toFloat(),
-                    sweepAngle = sweepAngle.toFloat(),
-                    useCenter = false,
-                    topLeft = offset,
-                    size = usedSize,
-                    style = Stroke(width = width, cap = StrokeCap.round)
+                        color = strokeColor,
+                        startAngle = startAngle.toFloat(),
+                        sweepAngle = sweepAngle.toFloat(),
+                        useCenter = false,
+                        topLeft = offset,
+                        size = usedSize,
+                        style = Stroke(width = width, cap = StrokeCap.round)
                 )
             }
         }
