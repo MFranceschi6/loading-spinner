@@ -19,15 +19,14 @@ import androidx.ui.graphics.StrokeCap
 import androidx.ui.graphics.drawscope.Stroke
 import androidx.ui.graphics.drawscope.rotate
 import androidx.ui.material.MaterialTheme
-import androidx.ui.unit.Dp
-import androidx.ui.unit.IntSize
+import androidx.ui.unit.*
 
 @SuppressLint("Range")
 @Composable
 internal fun drawLoadingWithControllOnAnimation(
     strokeColor: Color? = null,
     size: Dp = SpinnerSize.Medium,
-    strokeWidth: Float = 16F
+    strokeWidth: Dp = 6.1f.dp
 ): Pair<@Composable () -> Unit, ContentDrawScope.(center: Offset?, startingRotation: Float?) -> Unit> {
     val clock = AnimationClockAmbient.current.asDisposableClock()
     var incremented = remember { false }
@@ -57,12 +56,10 @@ internal fun drawLoadingWithControllOnAnimation(
     }
 
     return Pair({ onCommit {
-        Log.d("ANIMATION STARTING", "starting animation")
         rotationAnimation.animateTo(360F, rotationSpec)
         arcAnimation.animateTo(IntSize(-255, 270), arcSpec)
 
         onDispose {
-            Log.d("ANIMATION STOPPING", "stopping animation")
             rotationAnimation.snapTo(0F)
             rotationAnimation.stop()
             arcAnimation.snapTo(IntSize(0, 270))
@@ -79,7 +76,7 @@ internal fun drawLoadingWithControllOnAnimation(
 
             val (offset, usedSize) = if (size == SpinnerSize.FillElement) {
                 val smallerDimen = (this.size).minDimension
-                (smallerDimen - strokeWidth).let {
+                (smallerDimen - strokeWidth.toPx()).let {
                     Pair(
                         usedCenter.minus(Offset(it / 2, it / 2)),
                         Size(it, it)
@@ -106,8 +103,6 @@ internal fun drawLoadingWithControllOnAnimation(
             val startAngle = -(arcAnimation.value.width - currentOffSet) + 30
             val actualSweepAngle = -arcAnimation.value.height
 
-            Log.d("STARTANGLE", "arcAnimation Value: ${arcAnimation.value.width}, currentOffset: $currentOffSet, startingRotation: $startingRotation")
-            Log.d("DRAW LOADING", "startAngle $startAngle, sweepAngle $actualSweepAngle")
             drawArc(
                 color = actualStrokeColor,
                 startAngle = startAngle.toFloat(),
@@ -115,7 +110,7 @@ internal fun drawLoadingWithControllOnAnimation(
                 useCenter = false,
                 topLeft = offset,
                 size = usedSize,
-                style = Stroke(width = strokeWidth, cap = StrokeCap.round)
+                style = Stroke(width = strokeWidth.toPx(), cap = StrokeCap.round)
             )
         }
     })
@@ -125,7 +120,7 @@ internal fun drawLoadingWithControllOnAnimation(
 internal fun drawLoadingSpinner(
     strokeColor: Color? = null,
     size: Dp = SpinnerSize.Medium,
-    strokeWidth: Float = 16F
+    strokeWidth: Dp = 6.1f.dp
 ): ContentDrawScope.(center: Offset?, startingRotation: Float?) -> Unit {
 
     val (start, ret) = drawLoadingWithControllOnAnimation(strokeColor, size, strokeWidth)

@@ -12,9 +12,7 @@ import androidx.ui.core.*
 import androidx.ui.foundation.drawBackground
 import androidx.ui.graphics.Color
 import androidx.ui.material.MaterialTheme
-import androidx.ui.unit.IntSize
-import androidx.ui.unit.Dp
-
+import androidx.ui.unit.*
 
 
 /**
@@ -35,55 +33,15 @@ import androidx.ui.unit.Dp
  * This will show a [Color.Red] background while loading and then a [Color.Green] background to show it's elements
  *
  * @param loading control if to show or not the spinner
- * @param color color to apply to the spinner, if null the primary color taken from [MaterialTheme.colors] will be used
- * @param width width of the stroke to draw the spinner
- * @param size desired size of the spinner default to [SpinnerSize.Medium]
+ * @param strokeColor color to apply to the spinner, if null the primary color taken from [MaterialTheme.colors] will be used
+ * @param strokeWidth width of the stroke to draw the spinner
+ * @param spinnerSize desired size of the spinner default to [SpinnerSize.Medium]
  *
  * @see SpinnerSize
  */
-@SuppressLint("Range")
-fun Modifier.loadingSpinner(loading: Boolean, color: Color? = null, width: Float = 16F, size: Dp = SpinnerSize.Medium): Modifier = composed {
+fun Modifier.loadingSpinner(loading: Boolean, strokeColor: Color? = null, strokeWidth: Dp = 6.1f.dp, spinnerSize: Dp = SpinnerSize.Medium): Modifier = composed {
 
-
-    val clock = AnimationClockAmbient.current.asDisposableClock()
-    val rotationAnimation = remember {
-        AnimatedFloatModel(0F, clock)
-    }
-
-    val drawSpinner = drawLoadingSpinner(color, strokeWidth = width, size = size)
-
-    val rotationSpec = remember { repeatable<Float>(AnimationConstants.Infinite, tween(1300, easing = LinearEasing)) }
-
-
-    val arcAnimation = remember {
-        AnimatedValueModel(IntSize(0, 270), IntSizeToVectorConverter, clock, IntSize(1,1))
-    }
-
-
-    val arcSpec = remember {  repeatable<IntSize>(AnimationConstants.Infinite, keyframes {
-        durationMillis = 1400
-        IntSize(0, 270).at(0)
-        IntSize(0,270).at(200)
-
-
-        IntSize(0, 15).at(800).with(FastOutSlowInEasing)
-        IntSize(0, 15).at(1000)
-        IntSize(-255, 270).at(1400).with(FastOutSlowInEasing)
-    })}
-
-    onCommit {
-        rotationAnimation.animateTo(360F, rotationSpec)
-        arcAnimation.animateTo(IntSize(-100,230), arcSpec)
-
-        onDispose {
-            rotationAnimation.snapTo(0F)
-            rotationAnimation.stop()
-            arcAnimation.snapTo(IntSize(0, 270))
-            arcAnimation.stop()
-        }
-    }
-
-
+    val drawSpinner = drawLoadingSpinner(strokeColor, strokeWidth = strokeWidth, size = spinnerSize)
     if(loading) {
         Modifier.drawWithContent {
             drawSpinner(null, null)

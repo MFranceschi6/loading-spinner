@@ -18,8 +18,11 @@ import androidx.ui.graphics.Path
 import androidx.ui.graphics.StrokeCap
 import androidx.ui.graphics.drawscope.*
 import androidx.ui.material.MaterialTheme
+import androidx.ui.material.contentColorFor
+import androidx.ui.material.primarySurface
 import androidx.ui.unit.Density
 import androidx.ui.unit.dp
+import androidx.ui.unit.sp
 import kotlinx.coroutines.launch
 
 private enum class AnimationState{
@@ -28,11 +31,11 @@ private enum class AnimationState{
 
 @Composable
 fun Refreshable(
-    onRefresh: suspend () -> Unit,
-    modifier: Modifier = Modifier,
-    circleColor: Color = MaterialTheme.colors.surface,
-    spinnerColor: Color = MaterialTheme.colors.onSurface,
-    children: @Composable (modifier: Modifier) -> Unit){
+        onRefresh: suspend () -> Unit,
+        modifier: Modifier = Modifier,
+        circleColor: Color = MaterialTheme.colors.primarySurface,
+        spinnerColor: Color = contentColorFor(circleColor),
+        children: @Composable (modifier: Modifier) -> Unit){
 
 
     val animationLimit = ContextAmbient.current.resources.displayMetrics.heightPixels / 2f - ContextAmbient.current.resources.displayMetrics.heightPixels / 4.7f
@@ -43,10 +46,9 @@ fun Refreshable(
     var animationState by state { AnimationState.Idle }
 
 
-    Log.d("TARGET FOR LOADING", animationPositionForLoading.toString())
     var finalAnimationValue by state { 0f }
 
-    val (startAnimation, drawAnimation) = drawLoadingWithControllOnAnimation(strokeColor = spinnerColor, size = 20.dp, strokeWidth = 10f)
+    val (startAnimation, drawAnimation) = drawLoadingWithControllOnAnimation(strokeColor = spinnerColor, size = 20.dp, strokeWidth = 3.8f.dp)
 
     fun updateAnimation(distance: Float) {
         animation.snapTo((animation.targetValue + distance).coerceIn(0f, animationLimit))
@@ -223,11 +225,11 @@ fun Refreshable(
     }
 }
 
-fun Density.toPx(value: Float): Float{
+internal fun Density.toPx(value: Float): Float{
     return value.dp.toPx()
 }
 
 
-fun Density.getAnimationValue(currentValue: Float, firstExtreme: Float, secondExtreme: Float): Float {
+private fun Density.getAnimationValue(currentValue: Float, firstExtreme: Float, secondExtreme: Float): Float {
     return (currentValue.coerceIn(toPx(firstExtreme), toPx(secondExtreme)) - toPx(firstExtreme)) / toPx(secondExtreme - firstExtreme)
 }
