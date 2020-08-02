@@ -10,48 +10,12 @@ import androidx.ui.animation.IntSizeToVectorConverter
 import androidx.ui.animation.asDisposableClock
 import androidx.ui.core.*
 import androidx.ui.foundation.drawBackground
-import androidx.ui.geometry.Offset
-import androidx.ui.geometry.Size
 import androidx.ui.graphics.Color
-import androidx.ui.graphics.StrokeCap
-import androidx.ui.graphics.drawscope.Stroke
-import androidx.ui.graphics.drawscope.rotate
 import androidx.ui.material.MaterialTheme
 import androidx.ui.unit.IntSize
-import androidx.ui.unit.dp
 import androidx.ui.unit.Dp
 
 
-/**
- * Collection of common spinner dimensions,
- */
-object SpinnerSize{
-
-    /**
-     * [Dp] of 20F.dp
-     */
-    val Small = 20F.dp
-
-    /**
-     * [Dp] of 40F.dp
-     */
-    val Medium = 40F.dp
-
-    /**
-     * [Dp] of 60F.dp
-     */
-    val Big = 60F.dp
-
-    /**
-     * [Dp] of 60F.dp
-     */
-    val Bigger = 80F.dp
-
-    /**
-     * Expands the spinner dimensions to the dimension of the element is applied
-     */
-    val FillElement = 0F.dp
-}
 
 /**
  * Configure component to display the Android loading spinner if [loading]
@@ -86,9 +50,7 @@ fun Modifier.loadingSpinner(loading: Boolean, color: Color? = null, width: Float
         AnimatedFloatModel(0F, clock)
     }
 
-    val sizeInPixels = with(DensityAmbient.current) { size.toPx() }.let { remember(size) { Size(it, it) } }
-
-    val strokeColor = color ?: MaterialTheme.colors.primary
+    val drawSpinner = drawLoadingSpinner(color, strokeWidth = width, size = size)
 
     val rotationSpec = remember { repeatable<Float>(AnimationConstants.Infinite, tween(1300, easing = LinearEasing)) }
 
@@ -121,50 +83,10 @@ fun Modifier.loadingSpinner(loading: Boolean, color: Color? = null, width: Float
         }
     }
 
-    var currentOffSet = remember { -30 }
-    var incremented = remember{ false }
 
-
-    this + if(loading) {
+    if(loading) {
         Modifier.drawWithContent {
-
-            rotate(-rotationAnimation.value, center.x, center.y) {
-
-                val (offset, usedSize) = if (size == SpinnerSize.FillElement) {
-                    val smallerDimen = (this@drawWithContent.size).minDimension
-                    (smallerDimen-width).let {
-                        Pair(
-                                center.minus(Offset(it / 2, it / 2)),
-                                Size(it, it)
-                        )
-                    }
-                } else {
-                    Pair(center.minus(Offset(sizeInPixels.width / 2, sizeInPixels.height / 2)), sizeInPixels)
-                }
-
-                if (arcAnimation.value.width == 0) {
-                    if (!incremented) {
-                        incremented = true
-                        currentOffSet -= 105
-                        currentOffSet %= 360
-                    }
-                }
-                if (arcAnimation.value.width != 0) {
-                    incremented = false
-                }
-
-                val startAngle = arcAnimation.value.width - currentOffSet
-                val sweepAngle = arcAnimation.value.height
-                drawArc(
-                        color = strokeColor,
-                        startAngle = startAngle.toFloat(),
-                        sweepAngle = sweepAngle.toFloat(),
-                        useCenter = false,
-                        topLeft = offset,
-                        size = usedSize,
-                        style = Stroke(width = width, cap = StrokeCap.round)
-                )
-            }
+            drawSpinner(null, null)
         }
     } else {
         Modifier
