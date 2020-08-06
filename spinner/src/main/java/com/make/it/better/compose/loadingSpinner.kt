@@ -1,31 +1,35 @@
 package com.make.it.better.compose
 
 import android.annotation.SuppressLint
-import androidx.animation.*
-import androidx.compose.onCommit
-import androidx.compose.remember
-import androidx.ui.animation.AnimatedFloatModel
-import androidx.ui.animation.AnimatedValueModel
-import androidx.ui.animation.IntSizeToVectorConverter
-import androidx.ui.animation.asDisposableClock
-import androidx.ui.core.*
-import androidx.ui.foundation.drawBackground
-import androidx.ui.geometry.Offset
-import androidx.ui.geometry.Size
-import androidx.ui.graphics.Color
-import androidx.ui.graphics.StrokeCap
-import androidx.ui.graphics.drawscope.Stroke
-import androidx.ui.graphics.drawscope.rotate
-import androidx.ui.material.MaterialTheme
-import androidx.ui.unit.IntSize
-import androidx.ui.unit.dp
-import androidx.ui.unit.Dp
+import androidx.compose.animation.AnimatedFloatModel
+import androidx.compose.animation.AnimatedValueModel
+import androidx.compose.animation.VectorConverter
+import androidx.compose.animation.asDisposableClock
+import androidx.compose.animation.core.*
+import androidx.compose.foundation.drawBackground
+import androidx.compose.material.MaterialTheme
+import androidx.compose.runtime.onCommit
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
+import androidx.compose.ui.drawWithContent
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.platform.AnimationClockAmbient
+import androidx.compose.ui.platform.DensityAmbient
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.dp
 
 
 /**
  * Collection of common spinner dimensions,
  */
-object SpinnerSize{
+object SpinnerSize {
 
     /**
      * [Dp] of 20F.dp
@@ -94,24 +98,26 @@ fun Modifier.loadingSpinner(loading: Boolean, color: Color? = null, width: Float
 
 
     val arcAnimation = remember {
-        AnimatedValueModel(IntSize(0, 270), IntSizeToVectorConverter, clock, IntSize(1,1))
+        AnimatedValueModel(IntSize(0, 270), IntSize.VectorConverter, clock, IntSize(1, 1))
     }
 
 
-    val arcSpec = remember {  repeatable<IntSize>(AnimationConstants.Infinite, keyframes {
-        durationMillis = 1400
-        IntSize(0, 270).at(0)
-        IntSize(0,270).at(200)
+    val arcSpec = remember {
+        repeatable<IntSize>(AnimationConstants.Infinite, keyframes {
+            durationMillis = 1400
+            IntSize(0, 270).at(0)
+            IntSize(0, 270).at(200)
 
 
-        IntSize(0, 15).at(800).with(FastOutSlowInEasing)
-        IntSize(0, 15).at(1000)
-        IntSize(-255, 270).at(1400).with(FastOutSlowInEasing)
-    })}
+            IntSize(0, 15).at(800).with(FastOutSlowInEasing)
+            IntSize(0, 15).at(1000)
+            IntSize(-255, 270).at(1400).with(FastOutSlowInEasing)
+        })
+    }
 
     onCommit {
         rotationAnimation.animateTo(360F, rotationSpec)
-        arcAnimation.animateTo(IntSize(-100,230), arcSpec)
+        arcAnimation.animateTo(IntSize(-100, 230), arcSpec)
 
         onDispose {
             rotationAnimation.snapTo(0F)
@@ -122,17 +128,17 @@ fun Modifier.loadingSpinner(loading: Boolean, color: Color? = null, width: Float
     }
 
     var currentOffSet = remember { -30 }
-    var incremented = remember{ false }
+    var incremented = remember { false }
 
 
-    this + if(loading) {
+    if (loading) {
         Modifier.drawWithContent {
 
             rotate(-rotationAnimation.value, center.x, center.y) {
 
                 val (offset, usedSize) = if (size == SpinnerSize.FillElement) {
                     val smallerDimen = (this@drawWithContent.size).minDimension
-                    (smallerDimen-width).let {
+                    (smallerDimen - width).let {
                         Pair(
                                 center.minus(Offset(it / 2, it / 2)),
                                 Size(it, it)
@@ -162,7 +168,7 @@ fun Modifier.loadingSpinner(loading: Boolean, color: Color? = null, width: Float
                         useCenter = false,
                         topLeft = offset,
                         size = usedSize,
-                        style = Stroke(width = width, cap = StrokeCap.round)
+                        style = Stroke(width = width, cap = StrokeCap.Round)
                 )
             }
         }
